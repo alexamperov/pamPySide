@@ -6,25 +6,46 @@ from PySide6.QtCore import Qt, QSize, Signal
 from tools.database import Database
 
 
-def VariantFieldContainer(textBrowser, text="") -> QVBoxLayout:
+def VariantFieldContainer(textBrowser :QTextBrowser, text="") -> QVBoxLayout:
     """
     Возвращает не редактируемое поле с подписью над ней
     :param textBrowser: QTextBrowser
     :param text: Текст над полем
     :return Container:
     """
+    textBrowser.setStyleSheet("""
+                        QTextBrowser {
+                            border: 1px solid #ccc;
+                            border-radius: 4px;
+                            padding: 5px;
+                            background: white;
+                            margin-left: 10px;
+                            margin-right: 10px;
+                            font-family: 'Segoe UI', Arial, sans-serif;
+                            font-size: 14px
+                        }
+                    """)
     vertContainer = QVBoxLayout()
     vertContainer.setContentsMargins(0, 0, 0, 0)
     vertContainer.setSpacing(0)
-    vertContainer.addWidget(QLabel(text), alignment=Qt.AlignCenter)
+
+    label = QLabel(text)
+    label.setStyleSheet("""
+    QLabel {
+    font-family: 'Segoe UI', Arial, sans-serif;
+                            font-size: 14px
+    }
+    """)
+    vertContainer.addWidget(label, alignment=Qt.AlignCenter)
     vertContainer.addWidget(textBrowser)
-    vertContainer.setStretch(0, 1)
+
     return vertContainer
 
 
 class VariantTab(QWidget):
     #Signals
     variantSelected = Signal()
+    wrongVariantSelected = Signal(int)
 
     def __init__(self, state = None, onChangeVariantRequested=None):
         """
@@ -34,6 +55,7 @@ class VariantTab(QWidget):
         super().__init__()
         #Подгрузка базы
         self.variants = Database().fVars
+
         #TODO В базу бы эту логику перенести
         self.trigger_list = ["RS", "D", "T", "JK"]
         self.basis_list = ["Буля", "Пирса", "Шеффера"]
@@ -41,10 +63,7 @@ class VariantTab(QWidget):
         #Callbacks
         self.requestChangeVariant = onChangeVariantRequested
 
-        #Config
-        self.var_number = 0
-        self.var_chosen = False
-
+        #State
         if state is not None:
             self.state = state
 
@@ -72,6 +91,16 @@ class VariantTab(QWidget):
         variant_layout.addWidget(QLabel("Номер варианта:", alignment=Qt.AlignCenter))
 
         self.varEdit = QLineEdit()
+        self.varEdit.setStyleSheet("""
+                    QLineEdit {
+                        border: 1px solid #ccc;
+                        border-radius: 4px;
+                        padding: 5px;
+                        background: white;
+                        width: 200px;
+                        font-family: 'Segoe UI', Arial, sans-serif;
+                    }
+                """)
         self.varEdit.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
 
         self.acceptButton = QPushButton("Принять")
@@ -90,7 +119,7 @@ class VariantTab(QWidget):
         variant_layout = QHBoxLayout()
 
         container.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        container.setFixedHeight(60)
+        container.setFixedHeight(76)
 
         #TODO Также надо увеличить шрифт, можно в стейте глобально создать шрифт
 
@@ -114,31 +143,29 @@ class VariantTab(QWidget):
             VariantFieldContainer(self.triggerPreview, "Триггер")
         )
 
-
         container.setLayout(variant_layout)
-
         return container
 
     def onClickButton(self):
-
-        #TODO Установка флага self.var_chosen
-        #   Отправление сигнала variantSelected и
-        #   отправка данных последовательностей, базиса и триггера
-        #   Если флаг self.var_chosen был установлен - испускаем сигнал variantChangeRequested
-
         newVarNum = int(self.varEdit.text())
+        print(newVarNum)
 
+        # Если повторное нажатие кнопки принять, то ничего делать не надо
         if newVarNum == self.state.var_number:
             return
 
+        if newVarNum > len(self.variants) or newVarNum < 1:
+            self.wrongVariantSelected.emit(len(self.variants))
+            return
+
+        #Если вариант уже выбран - подтверждение смены варианта пользователем
         if self.state.var_chosen:
-            print("rechose var")
             if not self.requestChangeVariant():
                 self.varEdit.setText(str(self.state.var_number))
                 return
 
         var_num = int(self.varEdit.text())
-        varIndex=var_num - 1
+        varIndex = var_num - 1
 
         #Обновление текущих данных варианта
         self.state.var_number = var_num
@@ -147,8 +174,8 @@ class VariantTab(QWidget):
         self.state.var_chosen = True
         self.state.oneSequence = self.variants[varIndex][1].split(" ")
         self.state.zeroSequence = self.variants[varIndex][0].split(" ")
-
         #########################################################
+
         self.updatePreview()
         self.variantSelected.emit()
 
