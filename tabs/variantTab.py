@@ -1,16 +1,16 @@
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout,
                                QLabel, QLineEdit, QPushButton,
                                QSizePolicy, QTextBrowser, QSpacerItem, QLayout,)
-from PySide6.QtCore import Qt, QSize
+from PySide6.QtCore import Qt, QSize, Signal
 
 from tools.database import Database
 
 
-def VariantFieldContainer(textBrowser, text=""):
+def VariantFieldContainer(textBrowser, text="") -> QVBoxLayout:
     """
     Возвращает не редактируемое поле с подписью над ней
     :param textBrowser: QTextBrowser
-    :param text:
+    :param text: Текст над полем
     :return Container:
     """
     vertContainer = QVBoxLayout()
@@ -23,12 +23,23 @@ def VariantFieldContainer(textBrowser, text=""):
 
 
 class VariantTab(QWidget):
-    def __init__(self, state = None):
+    def __init__(self, state = None, onChangeVariantRequested=None):
+        """
+        :param state: Экземпляр состояния приложения
+        :param onChangeVariantRequested: Колбек функция вызываемая при попытке смены варианта
+        """
         super().__init__()
         #Подгрузка базы
         self.variants = Database().fVars
+        #TODO В базу бы эту логику перенести
         self.trigger_list = ["RS", "D", "T", "JK"]
         self.basis_list = ["Буля", "Пирса", "Шеффера"]
+
+        #Callbacks
+        self.requestChangeVariant = onChangeVariantRequested
+
+        #Signals
+        self.variantSelected = Signal()
 
         #Config
         self.var_number = 0
@@ -81,12 +92,9 @@ class VariantTab(QWidget):
         container.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         container.setFixedHeight(60)
 
-        #TODO Функция которая будет возвращать контейнеры
-        #   Также надо увеличить шрифт, можно в стейте глобально создать шрифт
-
+        #TODO Также надо увеличить шрифт, можно в стейте глобально создать шрифт
 
         self.zeroSequencePreview = QTextBrowser()
-
         variant_layout.addLayout(
             VariantFieldContainer(self.zeroSequencePreview, "X = 0")
         )
@@ -114,29 +122,31 @@ class VariantTab(QWidget):
     def onClickButton(self):
 
         #TODO Установка флага self.var_chosen
-        #   Проверка был ли флаг установлен True
         #   Отправление сигнала variantSelected и
         #   отправка данных последовательностей, базиса и триггера
         #   Если флаг self.var_chosen был установлен - испускаем сигнал variantChangeRequested
 
-        var_num = int(self.varEdit.text())
+        newVarNum = int(self.varEdit.text())
+        if self.state.var_chosen and newVarNum != self.state.var_number:
+            print("rechose var")
+            if not self.requestChangeVariant():
+                self.varEdit.setText(str(self.state.var_number))
+                return
 
-        self.state.var_number = var_num
+        var_num = int(self.varEdit.text())
+        varIndex=var_num - 1
 
         #Обновление текущих данных варианта
-        zeroSequence = self.variants[var_num][0].split(" ")
-        oneSequence = self.variants[var_num][1].split(" ")
-        basis = self.basis_list[int(self.variants[var_num][3])]
-        trigger = self.trigger_list[int(self.variants[var_num][2])]
-
-        self.state.trigger = trigger
-        self.state.basis = basis
+        self.state.var_number = var_num
+        self.state.trigger = self.trigger_list[int(self.variants[varIndex][2])]
+        self.state.basis = self.basis_list[int(self.variants[varIndex][3])]
         self.state.var_chosen = True
-        self.state.oneSequence = oneSequence
-        self.state.zeroSequence = zeroSequence
+        self.state.oneSequence = self.variants[varIndex][1].split(" ")
+        self.state.zeroSequence = self.variants[varIndex][0].split(" ")
 
         #########################################################
         self.updatePreview()
+        self.variantSelected.emit()
 
     #Установка в превью текущих значений
     def updatePreview(self):
