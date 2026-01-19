@@ -12,6 +12,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt
 from tools.database import Database
 from tabs.variantTab import VariantTab
+from tabs.stateEncodingTab import StateEncodingTab
 from tools.qMessageBoxes import changeVariantMessageBox, wrongVariantMessageBox
 from tools.state import State
 
@@ -30,13 +31,35 @@ class MainScreen(QWidget):
         layout.setSpacing(20)
 
         # Вкладки
+        #TODO вынести в отдельный класс
+        #   Метод отключения вкладок начиная с такой-то
+        #   Метод открытия вкладки по такому-то индексу
         self.tabs = QTabWidget()
+        self.tabs.setStyleSheet("""
+            QTabBar::tab:disabled {
+                background: #ccc;
+                color: gray;
+                border-left: 1px solid #ccc;
+                border-top: 1px solid #ccc;
+                border-right: 1px solid #ccc;
+                border-top-left-radius: 3px;
+                border-top-right-radius: 3px;
+                padding-left: 5px;
+                padding-right: 5px;
+                margin-left: 1px;
+            }
+        """)
 
         self.varTab = VariantTab(self.state,onChangeVariantRequested=self.onChangeVariantRequested)
+
         #TODO вынести все коннекты в отдельный метод
         self.varTab.variantSelected.connect(self.onVariantSelected)
         self.varTab.wrongVariantSelected.connect(self.onWrongVariantSelected)
         self.tabs.addTab(self.varTab, "Выбор варианта")
+
+        self.stateEncodingTab = StateEncodingTab()
+        #TODO Вынести коннекты в отдельный метод
+        self.tabs.addTab(self.stateEncodingTab, "Кодировка состояний")
 
         layout.addWidget(self.tabs)
 
