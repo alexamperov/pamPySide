@@ -1,6 +1,6 @@
-from PySide6.QtWidgets import (QWidget,QVBoxLayout,QHBoxLayout,
+from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout,
                                QLabel, QLineEdit, QPushButton,
-                               QSizePolicy,QTextBrowser)
+                               QSizePolicy, QTextBrowser, QSpacerItem, QLayout)
 from PySide6.QtCore import Qt, QSize
 
 from tools.database import Database
@@ -25,15 +25,17 @@ class VariantTab(QWidget):
 
     def init_ui(self):
         layout = QVBoxLayout()
-        layout.setContentsMargins(20, 20, 20, 5)
+        layout.setContentsMargins(20, 20, 20, 20)
 
-        layout.addWidget(QLabel("Вариантов в базе: " + str(len(self.variants))))
+        label = QLabel("Вариантов в базе: " + str(len(self.variants)))
+        layout.addWidget(label)
 
         varLayout = self.getVariantLayout()
         layout.addLayout(varLayout)
 
         dataLayout = self.getVariantDataLayout()
-        layout.addLayout(dataLayout)
+
+        layout.addWidget(dataLayout)
 
         layout.addStretch(1)
         self.setLayout(layout)
@@ -57,28 +59,31 @@ class VariantTab(QWidget):
         return variant_layout
 
     def getVariantDataLayout(self):
+        container = QWidget()
         variant_layout = QHBoxLayout()
 
+        container.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        container.setFixedHeight(50)
+
+
         self.zeroSequencePreview = QTextBrowser()
-        self.zeroSequencePreview.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
-        self.zeroSequencePreview.setFixedSize(QSize(120, 30))
         variant_layout.addWidget(self.zeroSequencePreview)
 
         self.oneSequencePreview = QTextBrowser()
-        self.oneSequencePreview.setFixedSize(QSize(120, 30))
-        self.oneSequencePreview.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         variant_layout.addWidget(self.oneSequencePreview)
 
         self.basisPreview = QTextBrowser()
-        self.basisPreview.setFixedSize(QSize(120, 30))
-        self.basisPreview.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         variant_layout.addWidget(self.basisPreview)
 
         self.triggerPreview = QTextBrowser()
-        self.triggerPreview.setFixedSize(QSize(120, 30))
-        self.triggerPreview.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         variant_layout.addWidget(self.triggerPreview)
-        return variant_layout
+
+        for i in variant_layout.children():
+            i.setContentsMargins(100,0,100,0)
+
+        container.setLayout(variant_layout)
+
+        return container
 
     def onClickButton(self):
 
