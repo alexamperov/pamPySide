@@ -11,7 +11,7 @@ class State:
     """
     def __init__(self):
         self.var_chosen = False
-        self.var_number = 0
+        self.var_number = -999
         self.oneSequence = []
         self.zeroSequence = []
         self.trigger = ""
