@@ -127,7 +127,11 @@ class VariantTab(QWidget):
         #   Если флаг self.var_chosen был установлен - испускаем сигнал variantChangeRequested
 
         newVarNum = int(self.varEdit.text())
-        if self.state.var_chosen and newVarNum != self.state.var_number:
+
+        if newVarNum == self.state.var_number:
+            return
+
+        if self.state.var_chosen:
             print("rechose var")
             if not self.requestChangeVariant():
                 self.varEdit.setText(str(self.state.var_number))
