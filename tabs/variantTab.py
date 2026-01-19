@@ -1,9 +1,25 @@
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout,
                                QLabel, QLineEdit, QPushButton,
-                               QSizePolicy, QTextBrowser, QSpacerItem, QLayout)
+                               QSizePolicy, QTextBrowser, QSpacerItem, QLayout,)
 from PySide6.QtCore import Qt, QSize
 
 from tools.database import Database
+
+
+def VariantFieldContainer(textBrowser, text=""):
+    """
+    Возвращает не редактируемое поле с подписью над ней
+    :param textBrowser: QTextBrowser
+    :param text:
+    :return Container:
+    """
+    vertContainer = QVBoxLayout()
+    vertContainer.setContentsMargins(0, 0, 0, 0)
+    vertContainer.setSpacing(0)
+    vertContainer.addWidget(QLabel(text), alignment=Qt.AlignCenter)
+    vertContainer.addWidget(textBrowser)
+    vertContainer.setStretch(0, 1)
+    return vertContainer
 
 
 class VariantTab(QWidget):
@@ -63,23 +79,33 @@ class VariantTab(QWidget):
         variant_layout = QHBoxLayout()
 
         container.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        container.setFixedHeight(50)
+        container.setFixedHeight(60)
+
+        #TODO Функция которая будет возвращать контейнеры
+        #   Также надо увеличить шрифт, можно в стейте глобально создать шрифт
 
 
         self.zeroSequencePreview = QTextBrowser()
-        variant_layout.addWidget(self.zeroSequencePreview)
+
+        variant_layout.addLayout(
+            VariantFieldContainer(self.zeroSequencePreview, "X = 0")
+        )
 
         self.oneSequencePreview = QTextBrowser()
-        variant_layout.addWidget(self.oneSequencePreview)
+        variant_layout.addLayout(
+            VariantFieldContainer(self.oneSequencePreview, "X = 1")
+        )
 
         self.basisPreview = QTextBrowser()
-        variant_layout.addWidget(self.basisPreview)
+        variant_layout.addLayout(
+            VariantFieldContainer(self.basisPreview, "Базис")
+        )
 
         self.triggerPreview = QTextBrowser()
-        variant_layout.addWidget(self.triggerPreview)
+        variant_layout.addLayout(
+            VariantFieldContainer(self.triggerPreview, "Триггер")
+        )
 
-        for i in variant_layout.children():
-            i.setContentsMargins(100,0,100,0)
 
         container.setLayout(variant_layout)
 
