@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt
 from tools.database import Database
 from tabs.variantTab import VariantTab
-from tools.qMessageBoxes import changeVariantMessageBox
+from tools.qMessageBoxes import changeVariantMessageBox, wrongVariantMessageBox
 from tools.state import State
 
 
@@ -35,7 +35,7 @@ class MainScreen(QWidget):
         self.varTab = VariantTab(self.state,onChangeVariantRequested=self.onChangeVariantRequested)
         #TODO вынести все коннекты в отдельный метод
         self.varTab.variantSelected.connect(self.onVariantSelected)
-
+        self.varTab.wrongVariantSelected.connect(self.onWrongVariantSelected)
         self.tabs.addTab(self.varTab, "Выбор варианта")
 
         layout.addWidget(self.tabs)
@@ -76,9 +76,14 @@ class MainScreen(QWidget):
         #TODO save function
         print("Save Clicked")
 
+    #Reaction on Signals
     def onVariantSelected(self):
         print(f"Variant Selected {self.state.var_number}")
         #TODO открыть следующую вкладку
+
+    def onWrongVariantSelected(self, upperBound:int):
+        wrongVariantMessageBox(self, upperBound)
+        print(f"Emit wrong variant with {upperBound} upperBound")
 
     #CallBacks
     def onChangeVariantRequested(self) -> bool:
