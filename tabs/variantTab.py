@@ -5,7 +5,6 @@ from PySide6.QtCore import Qt, QSize, Signal
 
 from tools.database import Database
 
-
 def VariantFieldContainer(textBrowser :QTextBrowser, text="") -> QVBoxLayout:
     """
     Возвращает не редактируемое поле с подписью над ней
@@ -40,7 +39,6 @@ def VariantFieldContainer(textBrowser :QTextBrowser, text="") -> QVBoxLayout:
     vertContainer.addWidget(textBrowser)
 
     return vertContainer
-
 
 class VariantTab(QWidget):
     #Signals
