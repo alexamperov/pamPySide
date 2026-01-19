@@ -12,12 +12,15 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt
 from tools.database import Database
 from tabs.variantTab import VariantTab
+from tools.state import State
 
 
 class MainScreen(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.varData = {}
+
+        self.state = State()
         self.init_ui()
 
     def init_ui(self):
@@ -27,14 +30,20 @@ class MainScreen(QWidget):
 
         # Вкладки
         self.tabs = QTabWidget()
-        self.tabs.addTab(VariantTab(), "Выбор варианта")
+        self.tabs.addTab(VariantTab(self.state), "Выбор варианта")
 
-        tab2 = QWidget()
-        tab2_layout = QVBoxLayout()
-        tab2_layout.addWidget(QLabel("Кодировка состояний\n(пока пусто)", alignment=Qt.AlignCenter))
-        tab2.setLayout(tab2_layout)
-        self.tabs.addTab(tab2, "Кодировка состояний")
 
+
+        layout.addWidget(self.tabs)
+
+        layout.addLayout(self.getToolBar())
+
+        self.setLayout(layout)
+
+        # Подключение кнопки Назад
+
+
+    def getToolBar(self):
         # Нижние кнопки
         btn_layout = QHBoxLayout()
         btn_layout.setSpacing(20)
@@ -48,11 +57,16 @@ class MainScreen(QWidget):
         btn_layout.addWidget(btn_next)
         btn_layout.addStretch(1)
 
-        layout.addWidget(self.tabs)
-
-        layout.addLayout(btn_layout)
-
-        self.setLayout(layout)
-
-        # Подключение кнопки Назад
+        btn_save.clicked.connect(self.onSaveClicked)
+        btn_next.clicked.connect(self.onNextClicked)
         btn_back.clicked.connect(self.parent().show_welcome)
+
+        return btn_layout
+
+    #TODO Пока что заглушка
+    def onNextClicked(self):
+        print(self.state.var_number)
+
+    #TODO Пока что заглушка
+    def onSaveClicked(self):
+        print("Save Clicked")

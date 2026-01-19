@@ -7,17 +7,19 @@ from tools.database import Database
 
 
 class VariantTab(QWidget):
-    def __init__(self):
+    def __init__(self, state = None):
         super().__init__()
         #Подгрузка базы
         self.variants = Database().fVars
         self.trigger_list = ["RS", "D", "T", "JK"]
         self.basis_list = ["Буля", "Пирса", "Шеффера"]
 
+        #Config
+        self.var_number = 0
+        self.var_chosen = False
 
-        self.varData = {}
-
-
+        if state is not None:
+            self.state = state
 
         self.init_ui()
 
@@ -88,25 +90,26 @@ class VariantTab(QWidget):
 
         var_num = int(self.varEdit.text())
 
+        self.state.var_number = var_num
+
         #Обновление текущих данных варианта
         zeroSequence = self.variants[var_num][0].split(" ")
         oneSequence = self.variants[var_num][1].split(" ")
         basis = self.basis_list[int(self.variants[var_num][3])]
         trigger = self.trigger_list[int(self.variants[var_num][2])]
 
-        self.varData = {
-            "varNumber": var_num,
-            "zeroSequence": zeroSequence,
-            "oneSequence": oneSequence,
-            "basis": basis,
-            "trigger": trigger
-        }
+        self.state.trigger = trigger
+        self.state.basis = basis
+        self.state.var_chosen = True
+        self.state.oneSequence = oneSequence
+        self.state.zeroSequence = zeroSequence
 
+        #########################################################
         self.updatePreview()
 
     #Установка в превью текущих значений
     def updatePreview(self):
-        self.zeroSequencePreview.setText(", ".join(self.varData["zeroSequence"]))
-        self.oneSequencePreview.setText(", ".join(self.varData["oneSequence"]))
-        self.triggerPreview.setText(self.varData["trigger"])
-        self.basisPreview.setText(self.varData["basis"])
+        self.zeroSequencePreview.setText(", ".join(self.state.zeroSequence))
+        self.oneSequencePreview.setText(", ".join(self.state.oneSequence))
+        self.triggerPreview.setText(self.state.trigger)
+        self.basisPreview.setText(self.state.basis)
