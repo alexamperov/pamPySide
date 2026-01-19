@@ -36,7 +36,7 @@ class MainScreen(QWidget):
         #TODO вынести все коннекты в отдельный метод
         self.varTab.variantSelected.connect(self.onVariantSelected)
 
-        self.tabs.addTab(varTab, "Выбор варианта")
+        self.tabs.addTab(self.varTab, "Выбор варианта")
 
         layout.addWidget(self.tabs)
 
