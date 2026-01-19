@@ -23,6 +23,9 @@ def VariantFieldContainer(textBrowser, text="") -> QVBoxLayout:
 
 
 class VariantTab(QWidget):
+    #Signals
+    variantSelected = Signal()
+
     def __init__(self, state = None, onChangeVariantRequested=None):
         """
         :param state: Экземпляр состояния приложения
@@ -37,9 +40,6 @@ class VariantTab(QWidget):
 
         #Callbacks
         self.requestChangeVariant = onChangeVariantRequested
-
-        #Signals
-        self.variantSelected = Signal()
 
         #Config
         self.var_number = 0

@@ -31,9 +31,12 @@ class MainScreen(QWidget):
 
         # Вкладки
         self.tabs = QTabWidget()
-        self.tabs.addTab(VariantTab(self.state,
-            onChangeVariantRequested=self.onChangeVariantRequested
-                                    ), "Выбор варианта")
+
+        self.varTab = VariantTab(self.state,onChangeVariantRequested=self.onChangeVariantRequested)
+        #TODO вынести все коннекты в отдельный метод
+        self.varTab.variantSelected.connect(self.onVariantSelected)
+
+        self.tabs.addTab(varTab, "Выбор варианта")
 
         layout.addWidget(self.tabs)
 
@@ -42,7 +45,6 @@ class MainScreen(QWidget):
         self.setLayout(layout)
 
         # Подключение кнопки Назад
-
 
     def getToolBar(self):
         # Нижние кнопки
@@ -64,7 +66,6 @@ class MainScreen(QWidget):
 
         return btn_layout
 
-
     #Биндинги
     #TODO Пока что заглушка
     def onNextClicked(self):
@@ -74,6 +75,10 @@ class MainScreen(QWidget):
     def onSaveClicked(self):
         #TODO save function
         print("Save Clicked")
+
+    def onVariantSelected(self):
+        print(f"Variant Selected {self.state.var_number}")
+        #TODO открыть следующую вкладку
 
     #CallBacks
     def onChangeVariantRequested(self) -> bool:
