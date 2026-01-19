@@ -7,11 +7,12 @@ from PySide6.QtWidgets import (
     QPushButton,
     QLabel,
     QStackedWidget,
-    QTabWidget, QSizePolicy
+    QTabWidget, QSizePolicy, QMessageBox
 )
 from PySide6.QtCore import Qt
 from tools.database import Database
 from tabs.variantTab import VariantTab
+from tools.qMessageBoxes import changeVariantMessageBox
 from tools.state import State
 
 
@@ -30,9 +31,9 @@ class MainScreen(QWidget):
 
         # Вкладки
         self.tabs = QTabWidget()
-        self.tabs.addTab(VariantTab(self.state), "Выбор варианта")
-
-
+        self.tabs.addTab(VariantTab(self.state,
+            onChangeVariantRequested=self.onChangeVariantRequested
+                                    ), "Выбор варианта")
 
         layout.addWidget(self.tabs)
 
@@ -63,10 +64,30 @@ class MainScreen(QWidget):
 
         return btn_layout
 
+
+    #Биндинги
     #TODO Пока что заглушка
     def onNextClicked(self):
         print(self.state.var_number)
 
     #TODO Пока что заглушка
     def onSaveClicked(self):
+        #TODO save function
         print("Save Clicked")
+
+    #CallBacks
+    def onChangeVariantRequested(self) -> bool:
+        """
+        :return: True -> если смена варианта подтверждена
+        """
+        #TODO вызвать метод для проверки заполнена ли следующая вкладка
+        reply = changeVariantMessageBox(self)
+        if reply == QMessageBox.Cancel:
+            return False
+        elif reply == QMessageBox.Save:
+            #TODO save function
+            print("Save Clicked")
+            return True
+        else:
+            print("Discard Clicked")
+            return True
