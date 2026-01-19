@@ -82,7 +82,7 @@ class Database:
         else:
             self.keyOffset = 0
 
-    def openDB(self, fn="C:\\Users\\theAmperov\\PyCharmProjects\\PySideTest\\tabs\\VariantList.pam-db"):
+    def openDB(self, fn="./VariantList.pam-db"):
         """Открытие файла базы данных"""
 
         if not os.path.exists(fn):
