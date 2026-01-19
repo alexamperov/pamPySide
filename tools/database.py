@@ -84,41 +84,31 @@ class Database:
 
     def openDB(self, fn="C:\\Users\\theAmperov\\PyCharmProjects\\PySideTest\\tabs\\VariantList.pam-db"):
         """Открытие файла базы данных"""
-        print(f"Пытаемся открыть файл: {fn}")
 
         if not os.path.exists(fn):
-            print(f"Файл не существует")
             return False
 
         if self.openFile(fn, 'ReadOnly'):
-            print("Файл открыт для чтения")
-
             # Читаем сигнатуру
             signature = self.getStr()
-            print(f"Прочитана сигнатура: '{signature}'")
 
             if signature == "pam-db":
-                print("✓ Сигнатура совпала")
 
                 # Читаем версию
                 self.fVersion = self.getStr()
-                print(f"Версия файла: {self.fVersion}")
 
                 # Читаем состояние проверки
                 self.checkState = self.getInt()
-                print(f"Check state: {self.checkState}")
 
                 # Читаем размеры таблицы
                 rows = self.getInt()
                 cols = self.getInt()
-                print(f"Размеры таблицы: {rows} строк, {cols} столбцов")
 
                 # Очищаем таблицу
                 self.fVars.clear()
                 self.fVars = [[] for _ in range(rows)]
 
                 # Читаем данные
-                print("Чтение данных...")
                 for i in range(rows):
                     if len(self.fVars[i]) == 0:
                         self.fVars[i] = ["" for _ in range(cols)]
@@ -126,18 +116,11 @@ class Database:
                     for j in range(cols):
                         value = self.getStr()
                         self.fVars[i][j] = value
-                        if i < 5 and j < 4:  # Показываем первые несколько значений
-                            print(f"  Ячейка [{i}][{j}] = '{value}'")
 
-                    # self.varLoaded(i) - закомментировано, так как нет этого метода
-
-                print("✓ Данные загружены")
                 self.closeFile()
                 return True
             else:
-                print("✗ Неверная сигнатура")
                 self.closeFile()
                 return False
         else:
-            print("✗ Не удалось открыть файл")
             return False
