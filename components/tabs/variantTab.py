@@ -2,43 +2,8 @@ from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout,
                                QLabel, QLineEdit, QPushButton,
                                QSizePolicy, QTextBrowser, QSpacerItem, QLayout,)
 from PySide6.QtCore import Qt, QSize, Signal
-
+from components.compound.labeledText import LabeledText
 from tools.database import Database
-
-def VariantFieldContainer(textBrowser :QTextBrowser, text="") -> QVBoxLayout:
-    """
-    Возвращает не редактируемое поле с подписью над ней
-    :param textBrowser: QTextBrowser
-    :param text: Текст над полем
-    :return Container:
-    """
-    textBrowser.setStyleSheet("""
-                        QTextBrowser {
-                            border: 1px solid #ccc;
-                            border-radius: 4px;
-                            padding: 5px;
-                            background: white;
-                            margin-left: 10px;
-                            margin-right: 10px;
-                            font-family: 'Segoe UI', Arial, sans-serif;
-                            font-size: 14px
-                        }
-                    """)
-    vertContainer = QVBoxLayout()
-    vertContainer.setContentsMargins(0, 0, 0, 0)
-    vertContainer.setSpacing(0)
-
-    label = QLabel(text)
-    label.setStyleSheet("""
-    QLabel {
-    font-family: 'Segoe UI', Arial, sans-serif;
-                            font-size: 14px
-    }
-    """)
-    vertContainer.addWidget(label, alignment=Qt.AlignCenter)
-    vertContainer.addWidget(textBrowser)
-
-    return vertContainer
 
 class VariantTab(QWidget):
     #Signals
@@ -91,7 +56,7 @@ class VariantTab(QWidget):
         self.varEdit = QLineEdit()
         self.varEdit.setStyleSheet("""
                     QLineEdit {
-                        border: 1px solid #ccc;
+                        border: 1px solid #cbd;
                         border-radius: 4px;
                         padding: 5px;
                         background: white;
@@ -117,29 +82,22 @@ class VariantTab(QWidget):
         variant_layout = QHBoxLayout()
 
         container.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        container.setFixedHeight(76)
 
         #TODO Также надо увеличить шрифт, можно в стейте глобально создать шрифт
 
         self.zeroSequencePreview = QTextBrowser()
-        variant_layout.addLayout(
-            VariantFieldContainer(self.zeroSequencePreview, "X = 0")
+        variant_layout.addWidget(
+            LabeledText(self.zeroSequencePreview, "X = 0")
         )
 
         self.oneSequencePreview = QTextBrowser()
-        variant_layout.addLayout(
-            VariantFieldContainer(self.oneSequencePreview, "X = 1")
-        )
+        variant_layout.addWidget(LabeledText(self.oneSequencePreview, "X = 1"))
 
         self.basisPreview = QTextBrowser()
-        variant_layout.addLayout(
-            VariantFieldContainer(self.basisPreview, "Базис")
-        )
+        variant_layout.addWidget(LabeledText(self.basisPreview, "Базис"))
 
         self.triggerPreview = QTextBrowser()
-        variant_layout.addLayout(
-            VariantFieldContainer(self.triggerPreview, "Триггер")
-        )
+        variant_layout.addWidget(LabeledText(self.triggerPreview, "Триггер"))
 
         container.setLayout(variant_layout)
         return container

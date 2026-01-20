@@ -1,18 +1,12 @@
 from PySide6.QtWidgets import (
-    QApplication,
-    QMainWindow,
     QWidget,
     QVBoxLayout,
     QHBoxLayout,
     QPushButton,
-    QLabel,
-    QStackedWidget,
-    QTabWidget, QSizePolicy, QMessageBox
+    QTabWidget, QMessageBox
 )
-from PySide6.QtCore import Qt
-from tools.database import Database
-from tabs.variantTab import VariantTab
-from tabs.stateEncodingTab import StateEncodingTab
+from components.tabs.variantTab import VariantTab
+from components.tabs.stateEncodingTab import StateEncodingTab
 from tools.qMessageBoxes import changeVariantMessageBox, wrongVariantMessageBox
 from tools.state import State
 

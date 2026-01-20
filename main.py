@@ -1,5 +1,5 @@
-from screens.mainScreen import MainScreen
-from screens.welcomeScreen import WelcomeScreen
+from components.views.mainScreen import MainScreen
+from components.views.welcomeScreen import WelcomeScreen
 from PySide6.QtWidgets import (QApplication,QMainWindow,QStackedWidget)
 from PySide6.QtGui import QPalette, QColor
 from PySide6.QtCore import Qt
