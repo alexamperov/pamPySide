@@ -82,10 +82,11 @@ class Database:
         else:
             self.keyOffset = 0
 
-    def openDB(self, fn="../VariantList.pam-db"):
+    def openDB(self, fn="./VariantList.pam-db"):
         """Открытие файла базы данных"""
 
         if not os.path.exists(fn):
+            print("Wrong path")
             return False
 
         if self.openFile(fn, 'ReadOnly'):
