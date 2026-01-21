@@ -7,7 +7,8 @@ from PySide6.QtWidgets import (
 )
 from components.tabs.variantTab import VariantTab
 from components.tabs.stateEncodingTab import StateEncodingTab
-from tools.qMessageBoxes import changeVariantMessageBox, wrongVariantMessageBox
+from tools.checkType import CheckType
+from tools.qMessageBoxes import changeVariantMessageBox, wrongVariantMessageBox, wrongCountsCheck, rightCountsCheck
 from tools.state import State
 
 
@@ -51,7 +52,8 @@ class MainScreen(QWidget):
         self.varTab.wrongVariantSelected.connect(self.onWrongVariantSelected)
         self.tabs.addTab(self.varTab, "Выбор варианта")
 
-        self.stateEncodingTab = StateEncodingTab()
+        self.stateEncodingTab = StateEncodingTab(self.state)
+        self.stateEncodingTab.checkResult.connect(self.onCheck)
         #TODO Вынести коннекты в отдельный метод
         self.tabs.addTab(self.stateEncodingTab, "Кодировка состояний")
 
@@ -96,11 +98,17 @@ class MainScreen(QWidget):
     #Reaction on Signals
     def onVariantSelected(self):
         print(f"Variant Selected {self.state.var_number}")
+        self.stateEncodingTab.variantChanged()
         #TODO открыть следующую вкладку
 
     def onWrongVariantSelected(self, upperBound:int):
         wrongVariantMessageBox(self, upperBound)
-        print(f"Emit wrong variant with {upperBound} upperBound")
+
+    def onCheck(self, is_valid : bool, type : CheckType):
+        if type == CheckType.COUNTS and not is_valid:
+            wrongCountsCheck(self)
+        else:
+            rightCountsCheck(self)
 
     #CallBacks
     def onChangeVariantRequested(self) -> bool:
