@@ -8,7 +8,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Проектирование автомата Мура (реверсивный счетчик)")
-        self.resize(900, 620)
+        self.resize(1200, 700)
 
         self.stack = QStackedWidget()
         self.setCentralWidget(self.stack)

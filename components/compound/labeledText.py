@@ -5,6 +5,9 @@ from shiboken6.Shiboken import Object
 
 
 class LabeledText(QWidget):
+    """
+    Custom Component with QTextBrowser under QLabel
+    """
     sizeContainer = Object
     isFilling : bool
 
