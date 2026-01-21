@@ -3,27 +3,26 @@ from PySide6.QtWidgets import QLabel, QLineEdit, QWidget, QVBoxLayout, QHBoxLayo
 
 
 class LabeledInput(QWidget):
-    def __init__(self, isVertical = True, text = "",  fieldWidth = 200, width = 500):
+    def __init__(self, isVertical = True, text = "",
+                 fieldWidth = 200, width = 480,
+                 hMargin = 0, vMargin = 0):
         super().__init__()
         self.text = text
         self.isVertical = isVertical
         self.fieldWidth = fieldWidth
         self.setFixedWidth(width)
-        self.margins = (0,0,0,0)
+        self.margins = (hMargin, vMargin, hMargin, vMargin)
+
         self.init_ui()
 
     def init_ui(self):
+
         if self.isVertical:
             layout = QVBoxLayout()
         else:
             layout = QHBoxLayout()
 
-        layout.setContentsMargins(0,0,0,0)
-        # TODO
-        #   Добавить поверх QHBoxLayout если isVertical == True
-        #   и выранивать его по центру по высоте относительно поля
-
-        # FIXME Слишком большие отступы между LabeledInput, сделать их настраиваемыми
+        layout.setContentsMargins(*self.margins)
 
         # Adding label
         label = QLabel(self.text)
@@ -49,7 +48,9 @@ class LabeledInput(QWidget):
                         """)
 
         layout.addWidget(self.input)
-        label.setAlignment(Qt.AlignmentFlag.AlignLeft)
+
+        label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
+
         self.input.setFixedWidth(self.fieldWidth)
         self.input.setAlignment(Qt.AlignmentFlag.AlignLeft)
 
@@ -57,3 +58,6 @@ class LabeledInput(QWidget):
 
     def getText(self):
         return self.input.text()
+
+    def setText(self, text = ""):
+        return self.input.setText(text)
