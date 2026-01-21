@@ -58,7 +58,7 @@ class VariantTab(QWidget):
                     QLineEdit {
                         border: 1px solid #cbd;
                         border-radius: 4px;
-                        padding: 5px;
+                        padding: 3px;
                         background: white;
                         width: 200px;
                         font-family: 'Segoe UI', Arial, sans-serif;
@@ -83,12 +83,8 @@ class VariantTab(QWidget):
 
         container.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
 
-        #TODO Также надо увеличить шрифт, можно в стейте глобально создать шрифт
-
         self.zeroSequencePreview = QTextBrowser()
-        variant_layout.addWidget(
-            LabeledText(self.zeroSequencePreview, "X = 0")
-        )
+        variant_layout.addWidget(LabeledText(self.zeroSequencePreview, "X = 0"))
 
         self.oneSequencePreview = QTextBrowser()
         variant_layout.addWidget(LabeledText(self.oneSequencePreview, "X = 1"))
@@ -103,8 +99,19 @@ class VariantTab(QWidget):
         return container
 
     def onClickButton(self):
-        newVarNum = int(self.varEdit.text())
-        print(newVarNum)
+
+        #if empty field
+        if self.varEdit.text() == "":
+            self.wrongVariantSelected.emit(len(self.variants))
+            return
+
+        #if field contents non-digit value
+        try:
+            newVarNum = int(self.varEdit.text())
+        except ValueError:
+            self.wrongVariantSelected.emit(len(self.variants))
+            self.varEdit.setText("")
+            return
 
         # Если повторное нажатие кнопки принять, то ничего делать не надо
         if newVarNum == self.state.var_number:
