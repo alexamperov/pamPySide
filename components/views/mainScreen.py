@@ -3,8 +3,9 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QHBoxLayout,
     QPushButton,
-    QTabWidget, QMessageBox
+    QTabWidget, QMessageBox, QFileDialog
 )
+from PySide6.QtCore import Qt
 from components.tabs.variantTab import VariantTab
 from components.tabs.stateEncodingTab import StateEncodingTab
 from tools.checkType import CheckType
@@ -96,12 +97,16 @@ class MainScreen(QWidget):
 
     #TODO Пока что заглушка
     def onSaveClicked(self):
+        file=QFileDialog(self)
         # TODO
         #   Открываем файл, пихаем туда стейт
         #   собираем конфиги таблиц и данные из вкладок и пихаем в файл
         print("Unimplemented")
 
     def onOpenClicked(self):
+        dialog = QFileDialog(self, viewMode=QFileDialog.ViewMode.Detail)
+        dialog.setOption(QFileDialog.DontUseNativeDialog)
+        dialog.show()
         # TODO
         #   Открываем файл, достаем из него стейт и данные
         #   Переопределяем self.state -> мы его закидывали во вкладки
