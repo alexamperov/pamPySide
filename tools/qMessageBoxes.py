@@ -17,3 +17,11 @@ def wrongCountsCheck(parent):
 def rightCountsCheck(parent):
     return QMessageBox().information( parent,"Внимание!", f"Количество состояний и количество триггеров соответствуют варианту!",
                                  QMessageBox.Ok , QMessageBox.Ok)
+
+def wrongStatesCheck(parent):
+    return QMessageBox().warning( parent,"Внимание!", f"Таблица кодировки состояний заполнена неверно!",
+                                 QMessageBox.Ok , QMessageBox.Ok)
+
+def rightStatesCheck(parent):
+    return QMessageBox().information( parent,"Внимание!", f"Таблица кодировки состояний заполнена правильно!",
+                                 QMessageBox.Ok , QMessageBox.Ok)

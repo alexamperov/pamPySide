@@ -12,7 +12,8 @@ from PySide6.QtCore import Qt
 from components.tabs.variantTab import VariantTab
 from components.tabs.stateEncodingTab import StateEncodingTab
 from tools.checkType import CheckType
-from tools.qMessageBoxes import changeVariantMessageBox, wrongVariantMessageBox, wrongCountsCheck, rightCountsCheck
+from tools.qMessageBoxes import changeVariantMessageBox, wrongVariantMessageBox, wrongCountsCheck, rightCountsCheck, \
+    wrongStatesCheck, rightStatesCheck
 from tools.state import State
 
 
@@ -144,8 +145,12 @@ class MainScreen(QWidget):
     def onCheck(self, is_valid : bool, typeMsg : CheckType):
         if typeMsg == CheckType.COUNTS and not is_valid:
             wrongCountsCheck(self)
-        else:
+        elif typeMsg == CheckType.COUNTS and is_valid:
             rightCountsCheck(self)
+        elif typeMsg == CheckType.ENCODE_STATES and not is_valid:
+            wrongStatesCheck(self)
+        elif typeMsg == CheckType.ENCODE_STATES and is_valid:
+            rightStatesCheck(self)
 
     #CallBacks
     def onChangeVariantRequested(self) -> bool:
