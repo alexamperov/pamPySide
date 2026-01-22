@@ -10,7 +10,7 @@ class EncodeTable(BaseTable):
 
     @staticmethod
     def __calculate_dimensions(countTriggers : int) -> list[int]:
-        return 1+pow(2,countTriggers), 1 + countTriggers
+        return 2+pow(2,countTriggers), 1 + countTriggers
 
     def rebuild(self, countTriggers):
         self.countTriggers = countTriggers
