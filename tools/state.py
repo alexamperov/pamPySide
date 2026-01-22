@@ -14,5 +14,7 @@ class State:
         self.var_number = -999
         self.oneSequence = []
         self.zeroSequence = []
-        self.trigger = ""
+        self.typeTrigger = ""
         self.basis = ""
+        self.triggers = 0
+        self.states = 0
