@@ -19,7 +19,6 @@ class EncodeTable(BaseTable):
         self.setRowCount(rowCount)
         self.setColumnCount(colCount)
 
-
         super().apply_config(config=self.build_config())
 
     def build_config(self) -> {}:
@@ -76,3 +75,8 @@ class EncodeTable(BaseTable):
             "binary_variants": ["0", "1"]
         }
         return config
+
+    def onOpen(self, data: []):
+
+        self.rebuild(self.countTriggers)
+        self.setData(data)
