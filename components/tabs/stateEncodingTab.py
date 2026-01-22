@@ -8,11 +8,12 @@ from tools.state import State
 import math
 from PySide6.QtCore import Qt
 from tools.checkType import CheckType
-
+from components.tables.encodeTable import EncodeTable
 class StateEncodingTab(QWidget):
     #fields
-    countStates : LabeledInput
-    countTriggers : LabeledInput
+    countStatesInput : LabeledInput
+    countTriggersInput : LabeledInput
+    triggers : int
 
     #Signals
     checkResult = Signal(bool, CheckType)
@@ -41,6 +42,11 @@ class StateEncodingTab(QWidget):
         infoInputLayout.addWidget(self.createCountBlock())
 
         container.addLayout(infoInputLayout)
+
+        self.table = EncodeTable(self.state.triggers)
+        self.table.setVisible(False)
+
+        container.addWidget(self.table)
         self.setLayout(container)
 
 # Creating Blocks Methods
@@ -53,10 +59,10 @@ class StateEncodingTab(QWidget):
 
         # fieldsLayout -> контейнер с полями и кнопкой
         fieldsLayout = QVBoxLayout()
-        self.countStates = LabeledInput(text="Максимальное количество состояний в циклах", isVertical=False)
-        self.countTriggers = LabeledInput(text="Требуемое количество триггеров log₂ Nₘₐₓ", isVertical=False)
-        fieldsLayout.addWidget(self.countStates)
-        fieldsLayout.addWidget(self.countTriggers)
+        self.countStatesInput = LabeledInput(text="Максимальное количество состояний в циклах", isVertical=False)
+        self.countTriggersInput = LabeledInput(text="Требуемое количество триггеров log₂ Nₘₐₓ", isVertical=False)
+        fieldsLayout.addWidget(self.countStatesInput)
+        fieldsLayout.addWidget(self.countTriggersInput)
 
         countsCheckButton = QPushButton("Принять")
         countsCheckButton.clicked.connect(self.__checkCounts__)
@@ -106,20 +112,22 @@ class StateEncodingTab(QWidget):
     def __checkCounts__(self):
         countMatch = True
         try:
-            triggers = int(self.countTriggers.getText())
-            states = int(self.countStates.getText())
+            self.state.triggers = int(self.countTriggersInput.getText())
+            self.state.states = int(self.countStatesInput.getText())
         except ValueError:
 
             return
-        if states != max(len(self.state.zeroSequence), len(self.state.oneSequence)):
+        if self.state.states != max(len(self.state.zeroSequence), len(self.state.oneSequence)):
             countMatch = False
-        if triggers != math.ceil(math.log2(states)):
+        if self.state.triggers != math.ceil(math.log2(self.state.states)):
             countMatch = False
 
+        if countMatch:
+            self.table.rebuild(self.state.triggers)
+            self.table.setVisible(True)
         self.checkResult.emit(countMatch, CheckType.COUNTS)
 
-
-
+    # Updating data info on changed variant
     def __updateInfoLabel__(self):
         """
         Func update Variant Data from state
@@ -128,10 +136,12 @@ class StateEncodingTab(QWidget):
         self.oneData.setText(" ".join(self.state.oneSequence))
         self.infolabel.update()
 
+    def __updateTable(self):
+        self.table.rebuild(self.state.triggers)
+
     def variantChanged(self):
         self.__updateInfoLabel__()
 
-        self.countStates.setText()
-        self.countTriggers.setText()
-
-        #TODO Вызывать функцию рестора таблицы
+        self.countStatesInput.setText()
+        self.countTriggersInput.setText()
+        self.table.setVisible(False)
