@@ -28,26 +28,51 @@ class EncodeTable(BaseTable):
         for i in range(0,self.countTriggers**2-1):
             headers.append({
                 "title": f"a{i}",
-                "coords": (i + 1,0)
+                "coords": (i + 2,0)
             })
 
         for i in range(0, self.countTriggers):
             headers.append(
                 {
                     "title": f"Q{self.countTriggers - i}",
-                    "coords": (0, i+1)
+                    "coords": (1, i+1)
                 }
             )
+        headers.append(
+            {
+                "title": "Состояние",
+                "coords": (0,0)
+            }
+        )
+        headers.append(
+            {
+                "title": "Код",
+                "coords": (0, 1)
+            }
+        )
+        spans = [
+            {
+                "from": (0,0),
+                "to": (1,0)
+            },
+            {
+                "from": (0,1),
+                "to": (0, 1+self.countTriggers)
+            }
+        ]
+
 
         config = {
             "regions": {
                 "binary": [
                     {
-                    "from": (1,1),
-                    "to": (self.countTriggers ** 2 + 1, 1 + self.countTriggers)
+                    "from": (2,1),
+                    "to": (pow(2, self.countTriggers) + 1, self.countTriggers)
                     }
                 ],
             },
-            "headers": headers
+            "headers": headers,
+            "spans": spans,
+            "binary_variants": ["0", "1"]
         }
         return config
