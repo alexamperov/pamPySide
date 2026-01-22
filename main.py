@@ -27,6 +27,9 @@ class MainWindow(QMainWindow):
     def show_welcome(self):
         self.stack.setCurrentWidget(self.welcome)
 
+    def open_file(self):
+        self.create_project.onOpenClicked()
+
 def apply_light_palette(app: QApplication):
     """
     Применяет светлую тему, аналогичную твоему C++ коду

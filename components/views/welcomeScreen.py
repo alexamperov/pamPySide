@@ -26,7 +26,6 @@ class WelcomeScreen(QWidget):
         btn_create.setFixedSize(200, 40)
         btn_open = QPushButton("Открыть проект")
         btn_open.setFixedSize(200, 40)
-        btn_open.setEnabled(False)  # пока неактивна, как просил
 
         layout.addStretch(1)
         layout.addWidget(subtitle)
@@ -39,4 +38,5 @@ class WelcomeScreen(QWidget):
         self.setLayout(layout)
 
         # Сигнал
+        btn_open.clicked.connect(self.parent().open_file)
         btn_create.clicked.connect(self.parent().show_create_project)
