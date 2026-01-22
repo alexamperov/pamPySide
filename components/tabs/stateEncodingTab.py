@@ -9,6 +9,7 @@ import math
 from PySide6.QtCore import Qt
 from tools.checkType import CheckType
 from components.tables.encodeTable import EncodeTable
+
 class StateEncodingTab(QWidget):
     #fields
     countStatesInput : LabeledInput
@@ -136,12 +137,12 @@ class StateEncodingTab(QWidget):
         self.oneData.setText(" ".join(self.state.oneSequence))
         self.infolabel.update()
 
-    def __updateTable(self):
-        self.table.rebuild(self.state.triggers)
-
     def variantChanged(self):
         self.__updateInfoLabel__()
 
         self.countStatesInput.setText()
         self.countTriggersInput.setText()
         self.table.setVisible(False)
+
+    def onOpen(self):
+        raise NotImplementedError("Open Unimplemented")

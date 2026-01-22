@@ -54,7 +54,6 @@ class MainScreen(QWidget):
 
         self.stateEncodingTab = StateEncodingTab(self.state)
         self.stateEncodingTab.checkResult.connect(self.onCheck)
-        #TODO Вынести коннекты в отдельный метод
         self.tabs.addTab(self.stateEncodingTab, "Кодировка состояний")
 
         layout.addWidget(self.tabs)
@@ -73,14 +72,19 @@ class MainScreen(QWidget):
         btn_save = QPushButton("Сохранить")
         btn_next = QPushButton("Далее")
 
+        btn_open = QPushButton("Открыть")
+
+
         btn_layout.addStretch(1)
         btn_layout.addWidget(btn_back)
         btn_layout.addWidget(btn_save)
+        btn_layout.addWidget(btn_open)
         btn_layout.addWidget(btn_next)
         btn_layout.addStretch(1)
 
         btn_save.clicked.connect(self.onSaveClicked)
         btn_next.clicked.connect(self.onNextClicked)
+        btn_open.clicked.connect(self.onOpenClicked)
         btn_back.clicked.connect(self.parent().show_welcome)
 
         return btn_layout
@@ -92,20 +96,30 @@ class MainScreen(QWidget):
 
     #TODO Пока что заглушка
     def onSaveClicked(self):
-        #TODO save function
-        print("Save Clicked")
+        # TODO
+        #   Открываем файл, пихаем туда стейт
+        #   собираем конфиги таблиц и данные из вкладок и пихаем в файл
+        print("Unimplemented")
+
+    def onOpenClicked(self):
+        # TODO
+        #   Открываем файл, достаем из него стейт и данные
+        #   Переопределяем self.state -> мы его закидывали во вкладки
+        #   следовательно он автоматически должен поменяться
+        #   Вызываем onOpen(...) у вкладок, которые подставят данные в текстовые поля
+        #   и вызовут rebuild и setData
+        print("Unimplemented")
 
     #Reaction on Signals
     def onVariantSelected(self):
-        print(f"Variant Selected {self.state.var_number}")
         self.stateEncodingTab.variantChanged()
         #TODO открыть следующую вкладку
 
     def onWrongVariantSelected(self, upperBound:int):
         wrongVariantMessageBox(self, upperBound)
 
-    def onCheck(self, is_valid : bool, type : CheckType):
-        if type == CheckType.COUNTS and not is_valid:
+    def onCheck(self, is_valid : bool, typeMsg : CheckType):
+        if typeMsg == CheckType.COUNTS and not is_valid:
             wrongCountsCheck(self)
         else:
             rightCountsCheck(self)
