@@ -132,7 +132,7 @@ class VariantTab(QWidget):
 
         #Обновление текущих данных варианта
         self.state.var_number = var_num
-        self.state.trigger = self.trigger_list[int(self.variants[varIndex][2])]
+        self.state.typeTrigger = self.trigger_list[int(self.variants[varIndex][2])]
         self.state.basis = self.basis_list[int(self.variants[varIndex][3])]
         self.state.var_chosen = True
         self.state.oneSequence = self.variants[varIndex][1].split(" ")
@@ -146,5 +146,5 @@ class VariantTab(QWidget):
     def updatePreview(self):
         self.zeroSequencePreview.setText(", ".join(self.state.zeroSequence))
         self.oneSequencePreview.setText(", ".join(self.state.oneSequence))
-        self.triggerPreview.setText(self.state.trigger)
+        self.triggerPreview.setText(self.state.typeTrigger)
         self.basisPreview.setText(self.state.basis)
