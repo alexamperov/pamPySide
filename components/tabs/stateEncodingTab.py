@@ -1,3 +1,5 @@
+from dataclasses import asdict
+
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import (QWidget, QVBoxLayout,
                                QSpacerItem, QSizePolicy,
@@ -16,12 +18,16 @@ class StateEncodingTab(QWidget):
     countTriggersInput : LabeledInput
     triggers : int
 
+    countsRight : bool
+    tableRight : bool
+
     #Signals
     checkResult = Signal(bool, CheckType)
 
     def __init__(self, state : State):
         super().__init__()
         self.state = state
+        self.tableRight = False
         self.init_ui()
 
     def init_ui(self):
@@ -123,6 +129,7 @@ class StateEncodingTab(QWidget):
         if self.state.triggers != math.ceil(math.log2(self.state.states)):
             countMatch = False
 
+        self.countsRight = countMatch
         if countMatch:
             self.table.rebuild(self.state.triggers)
             self.table.setVisible(True)
@@ -144,5 +151,22 @@ class StateEncodingTab(QWidget):
         self.countTriggersInput.setText()
         self.table.setVisible(False)
 
-    def onOpen(self):
-        raise NotImplementedError("Open Unimplemented")
+    def onOpen(self, data):
+        self.countTriggersInput.setText(str(self.state.triggers))
+        self.countStatesInput.setText(str(self.state.states))
+
+        self.countsRight = data.get("countsRight", False)
+        self.tableRight = data.get("tableRight", False)
+        if self.countsRight:
+            self.table.setVisible(True)
+        tableData = data.get("tableData", [])
+
+
+        self.table.onOpen(tableData, self.state.triggers)
+
+    def onSave(self):
+        return {
+            "countsRight": self.countsRight,
+            "tableRight": self.tableRight,
+            "tableData": self.table.getData()
+        }

@@ -9,12 +9,34 @@ class State:
     field basis
     field trigger
     """
-    def __init__(self):
-        self.var_chosen = False
-        self.var_number = -999
-        self.oneSequence = []
-        self.zeroSequence = []
-        self.typeTrigger = ""
-        self.basis = ""
-        self.triggers = 0
-        self.states = 0
+    var_chosen :bool
+    var_number : int
+    oneSequence : []
+    zeroSequence : []
+    typeTrigger : str
+    basis : str
+    triggers : int
+    states : int
+    def __init__(self, var_chosen = False, var_number = -1,
+                 oneSequence = [], zeroSequence = [], typeTrigger = "",
+                 basis = "", triggers = 0, states = 0):
+        self.var_chosen = var_chosen
+        self.var_number = var_number
+        self.oneSequence = oneSequence
+        self.zeroSequence = zeroSequence
+        self.typeTrigger = typeTrigger
+        self.basis = basis
+        self.triggers = triggers
+        self.states = states
+
+    def update(self, var_chosen = False, var_number = -1,
+                 oneSequence = [], zeroSequence = [], typeTrigger = "",
+                 basis = "", triggers = 0, states = 0):
+        self.var_chosen = var_chosen
+        self.var_number = var_number
+        self.oneSequence = oneSequence
+        self.zeroSequence = zeroSequence
+        self.typeTrigger = typeTrigger
+        self.basis = basis
+        self.triggers = triggers
+        self.states = states

@@ -76,7 +76,7 @@ class EncodeTable(BaseTable):
         }
         return config
 
-    def onOpen(self, data: []):
-
+    def onOpen(self, data: [], countTriggers):
+        self.countTriggers = countTriggers
         self.rebuild(self.countTriggers)
         self.setData(data)

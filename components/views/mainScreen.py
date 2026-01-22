@@ -1,3 +1,6 @@
+import pickle
+from dataclasses import asdict
+
 from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -14,6 +17,7 @@ from tools.state import State
 
 
 class MainScreen(QWidget):
+    state : State
     def __init__(self, parent=None):
         super().__init__(parent)
         self.varData = {}
@@ -95,25 +99,39 @@ class MainScreen(QWidget):
     def onNextClicked(self):
         print(self.state.var_number)
 
-    #TODO Пока что заглушка
     def onSaveClicked(self):
-        file=QFileDialog(self)
-        # TODO
-        #   Открываем файл, пихаем туда стейт
-        #   собираем конфиги таблиц и данные из вкладок и пихаем в файл
-        print("Unimplemented")
+        dialog = QFileDialog(self)
+        file = dialog.getSaveFileName(caption="Сохранение файла", filter="Файл pam (*.pam)")
+        save_data = {
+            'state': asdict(self.state),
+            'encoding_data': self.stateEncodingTab.onSave()
+        }
+        print(f"save data: {save_data}")
+
+        with open(file[0],"wb") as f:
+            pickle.dump(save_data, f, pickle.DEFAULT_PROTOCOL)
+
 
     def onOpenClicked(self):
-        dialog = QFileDialog(self, viewMode=QFileDialog.ViewMode.Detail)
-        dialog.setOption(QFileDialog.DontUseNativeDialog)
-        dialog.show()
-        # TODO
+        dialog = QFileDialog(parent=self)
+
+        file = dialog.getOpenFileName(caption="Открытие файла", filter="Файл pam (*.pam)")
+
+        with open(file[0], "rb") as f:
+            loaded_data = pickle.load(f)
+
+            self.state.update(**loaded_data['state'])
+            self.stateEncodingTab.onOpen(loaded_data['encoding_data'])
+
+            #self.stateEncodingTab.onOpen()
         #   Открываем файл, достаем из него стейт и данные
-        #   Переопределяем self.state -> мы его закидывали во вкладки
+        #   Обновляем self.state -> мы его закидывали во вкладки
         #   следовательно он автоматически должен поменяться
         #   Вызываем onOpen(...) у вкладок, которые подставят данные в текстовые поля
         #   и вызовут rebuild и setData
-        print("Unimplemented")
+        self.parent().parent().show_create_project()
+        self.varTab.onOpen()
+
 
     #Reaction on Signals
     def onVariantSelected(self):

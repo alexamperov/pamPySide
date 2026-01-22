@@ -100,7 +100,7 @@ class BaseTable(QTableWidget):
                             item.setText(variants[nextIndex])
         super().mouseDoubleClickEvent(event)
 
-    def rebuild(self, any = None):
+    def rebuild(self, any: int):
         raise NotImplementedError("rebuild not implemented")
 
     def check(self) -> bool:
@@ -140,7 +140,7 @@ class BaseTable(QTableWidget):
             if item:
                 item.setText(str(value))
 
-    def onOpen(self, data: []):
+    def onOpen(self, data: [], any : int):
         raise NotImplementedError("Open method not implemented in child class")
 
     def onSave(self) -> []:
