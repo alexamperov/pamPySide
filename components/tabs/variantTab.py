@@ -1,3 +1,5 @@
+from dataclasses import asdict
+
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout,
                                QLabel, QLineEdit, QPushButton,
                                QSizePolicy, QTextBrowser, QSpacerItem, QLayout,)
@@ -148,3 +150,7 @@ class VariantTab(QWidget):
         self.oneSequencePreview.setText(", ".join(self.state.oneSequence))
         self.triggerPreview.setText(self.state.typeTrigger)
         self.basisPreview.setText(self.state.basis)
+
+    def onOpen(self):
+        self.varEdit.setText(str(self.state.var_number))
+        self.updatePreview()
