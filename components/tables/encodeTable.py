@@ -80,3 +80,25 @@ class EncodeTable(BaseTable):
         self.countTriggers = countTriggers
         self.rebuild(self.countTriggers)
         self.setData(data)
+
+    def check(self) -> [bool,[]]:
+        statesBuff = []
+        for row in range(2, self.rowCount()):
+            state = []
+            for col in range(0, self.columnCount()):
+                state.append(self.item(row, col).text())
+            statesBuff.append(state)
+
+        seen = []
+        for i in statesBuff:
+            if i[1:] not in seen:
+                seen.append(i[1:])
+            else: return False, []
+
+        states = []
+        for i in statesBuff:
+            state = {"state": i[0]}
+            for q in range(1, len(i)):
+                state[f"Q{len(i)-q}"] = i[q]
+                states.append(state)
+        return True, states

@@ -50,10 +50,14 @@ class StateEncodingTab(QWidget):
 
         container.addLayout(infoInputLayout)
 
-        self.table = EncodeTable(self.state.triggers)
+        self.table = EncodeTable(self.state.triggerCount)
         self.table.setVisible(False)
 
+        checkTableButton = QPushButton("Принять")
+        checkTableButton.clicked.connect(self.__checkStates__)
+
         container.addWidget(self.table)
+        container.addWidget(checkTableButton)
         self.setLayout(container)
 
 # Creating Blocks Methods
@@ -119,21 +123,29 @@ class StateEncodingTab(QWidget):
     def __checkCounts__(self):
         countMatch = True
         try:
-            self.state.triggers = int(self.countTriggersInput.getText())
-            self.state.states = int(self.countStatesInput.getText())
+            self.state.triggerCount = int(self.countTriggersInput.getText())
+            self.state.stateCount = int(self.countStatesInput.getText())
         except ValueError:
-
+            self.checkResult.emit(False, CheckType.COUNTS)
             return
-        if self.state.states != max(len(self.state.zeroSequence), len(self.state.oneSequence)):
+
+        if self.state.stateCount != max(len(self.state.zeroSequence), len(self.state.oneSequence)):
             countMatch = False
-        if self.state.triggers != math.ceil(math.log2(self.state.states)):
+        if self.state.triggerCount != math.ceil(math.log2(self.state.stateCount)):
             countMatch = False
 
         self.countsRight = countMatch
         if countMatch:
-            self.table.rebuild(self.state.triggers)
+            self.table.rebuild(self.state.triggerCount)
             self.table.setVisible(True)
         self.checkResult.emit(countMatch, CheckType.COUNTS)
+
+    # Check Table Slot
+    def __checkStates__(self):
+        isValid, states = self.table.check()
+        if isValid:
+            self.state.states = states
+        self.checkResult.emit(isValid, CheckType.ENCODE_STATES)
 
     # Updating data info on changed variant
     def __updateInfoLabel__(self):
@@ -152,8 +164,8 @@ class StateEncodingTab(QWidget):
         self.table.setVisible(False)
 
     def onOpen(self, data):
-        self.countTriggersInput.setText(str(self.state.triggers))
-        self.countStatesInput.setText(str(self.state.states))
+        self.countTriggersInput.setText(str(self.state.triggerCount))
+        self.countStatesInput.setText(str(self.state.stateCount))
 
         self.countsRight = data.get("countsRight", False)
         self.tableRight = data.get("tableRight", False)
@@ -162,9 +174,10 @@ class StateEncodingTab(QWidget):
         tableData = data.get("tableData", [])
 
 
-        self.table.onOpen(tableData, self.state.triggers)
+        self.table.onOpen(tableData, self.state.triggerCount)
 
     def onSave(self):
+
         return {
             "countsRight": self.countsRight,
             "tableRight": self.tableRight,

@@ -15,28 +15,31 @@ class State:
     zeroSequence : []
     typeTrigger : str
     basis : str
-    triggers : int
-    states : int
+    triggerCount : int
+    stateCount : int
+    states : []
     def __init__(self, var_chosen = False, var_number = -1,
                  oneSequence = [], zeroSequence = [], typeTrigger = "",
-                 basis = "", triggers = 0, states = 0):
+                 basis = "", triggerCount = 0, stateCount = 0, states = []):
         self.var_chosen = var_chosen
         self.var_number = var_number
         self.oneSequence = oneSequence
         self.zeroSequence = zeroSequence
         self.typeTrigger = typeTrigger
         self.basis = basis
-        self.triggers = triggers
+        self.triggerCount = triggerCount
+        self.stateCount = stateCount
         self.states = states
 
     def update(self, var_chosen = False, var_number = -1,
-                 oneSequence = [], zeroSequence = [], typeTrigger = "",
-                 basis = "", triggers = 0, states = 0):
+               oneSequence = [], zeroSequence = [], typeTrigger = "",
+               basis = "", triggerCount = 0, stateCount = 0, states = []):
         self.var_chosen = var_chosen
         self.var_number = var_number
         self.oneSequence = oneSequence
         self.zeroSequence = zeroSequence
         self.typeTrigger = typeTrigger
         self.basis = basis
-        self.triggers = triggers
+        self.triggerCount = triggerCount
+        self.stateCount = stateCount
         self.states = states
