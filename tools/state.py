@@ -1,45 +1,36 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import Any, Dict, Optional, List
+
+
+@dataclass
+class VariantState:
+    var_chosen: bool = False
+    var_number: Optional[int] = None
+    oneSequence: List[str] = field(default_factory=list)
+    zeroSequence: List[str] = field(default_factory=list)
+    typeTrigger: str = ""
+    typeBasis: str = ""
+
+class EncodingTabState:
+    triggerCount: int
+    stateCount: int
+    isTableVisible:bool
+    isCountsRight:bool
+    isVerified : bool
+    tableData : field(default_factory=List[Dict[str, Any]])
+    states: List[Dict[str, Any]] = field(default_factory=dict)
+
 @dataclass
 class State:
-    """
-    field var_number
-    field var_chosen
-    field oneSequence
-    field zeroSequence
-    field basis
-    field trigger
-    """
-    var_chosen :bool
-    var_number : int
-    oneSequence : []
-    zeroSequence : []
-    typeTrigger : str
-    basis : str
-    triggerCount : int
-    stateCount : int
-    states : []
-    def __init__(self, var_chosen = False, var_number = -1,
-                 oneSequence = [], zeroSequence = [], typeTrigger = "",
-                 basis = "", triggerCount = 0, stateCount = 0, states = []):
-        self.var_chosen = var_chosen
-        self.var_number = var_number
-        self.oneSequence = oneSequence
-        self.zeroSequence = zeroSequence
-        self.typeTrigger = typeTrigger
-        self.basis = basis
-        self.triggerCount = triggerCount
-        self.stateCount = stateCount
-        self.states = states
 
-    def update(self, var_chosen = False, var_number = -1,
-               oneSequence = [], zeroSequence = [], typeTrigger = "",
-               basis = "", triggerCount = 0, stateCount = 0, states = []):
-        self.var_chosen = var_chosen
-        self.var_number = var_number
-        self.oneSequence = oneSequence
-        self.zeroSequence = zeroSequence
-        self.typeTrigger = typeTrigger
-        self.basis = basis
-        self.triggerCount = triggerCount
-        self.stateCount = stateCount
-        self.states = states
+    variant : VariantState = field(default_factory=VariantState)
+    tabs: Dict[str, Any] = field(default_factory=dict)
+
+    def __post_init__(self):
+        if not self.tabs:
+            self.tabs = {
+                'variant': self.variant,
+                'encoding': EncodingTabState(),
+                'transitions': {} #TODO
+            }
+
