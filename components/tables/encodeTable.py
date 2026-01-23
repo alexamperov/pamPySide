@@ -76,7 +76,7 @@ class EncodeTable(BaseTable):
         }
         return config
 
-    def onOpen(self, data: [], countTriggers):
+    def restore_from_data(self, data: [], countTriggers):
         self.countTriggers = countTriggers
         self.rebuild(self.countTriggers)
         self.setData(data)
@@ -100,5 +100,5 @@ class EncodeTable(BaseTable):
             state = {"state": i[0]}
             for q in range(1, len(i)):
                 state[f"Q{len(i)-q}"] = i[q]
-                states.append(state)
+            states.append(state)
         return True, states

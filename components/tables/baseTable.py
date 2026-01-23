@@ -94,7 +94,6 @@ class BaseTable(QTableWidget):
             for i in binary:
                 if row >= i["from"][0] & row <= i["to"][0]:
                     if col >= i["from"][1] & col <= i["to"][1]:
-                        print(i["to"][1])
                         if item.text() in variants:
                             nextIndex = (variants.index(item.text()) + 1) % len(variants)
                             item.setText(variants[nextIndex])
@@ -140,7 +139,7 @@ class BaseTable(QTableWidget):
             if item:
                 item.setText(str(value))
 
-    def onOpen(self, data: [], any : int):
+    def restore_from_data(self, data: [], any : int):
         raise NotImplementedError("Open method not implemented in child class")
 
     def onSave(self) -> []:
