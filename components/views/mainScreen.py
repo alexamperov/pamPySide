@@ -1,4 +1,5 @@
 import pickle
+import pprint
 from dataclasses import asdict
 
 from PySide6.QtWidgets import (
@@ -68,7 +69,6 @@ class MainScreen(QWidget):
 
         self.setLayout(layout)
 
-        # Подключение кнопки Назад
 
     def getToolBar(self):
         # Нижние кнопки
@@ -90,7 +90,7 @@ class MainScreen(QWidget):
 
         btn_save.clicked.connect(self.onSaveClicked)
         btn_next.clicked.connect(self.onNextClicked)
-        btn_open.clicked.connect(self.onOpenClicked)
+        btn_open.clicked.connect(self.on_open_clicked)
         btn_back.clicked.connect(self.parent().show_welcome)
 
         return btn_layout
@@ -98,41 +98,36 @@ class MainScreen(QWidget):
     #Биндинги
     #TODO Пока что заглушка
     def onNextClicked(self):
-        print(self.state.var_number)
+        print(self.state.variant.var_number)
 
     def onSaveClicked(self):
         dialog = QFileDialog(self)
         file = dialog.getSaveFileName(caption="Сохранение файла", filter="Файл pam (*.pam)")
+        self.stateEncodingTab.onSave()
         save_data = {
             'state': asdict(self.state),
-            'encoding_data': self.stateEncodingTab.onSave()
         }
-        print(f"save data: {save_data}")
+        pprint.pprint(save_data)
 
         with open(file[0],"wb") as f:
             pickle.dump(save_data, f, pickle.DEFAULT_PROTOCOL)
 
 
-    def onOpenClicked(self):
+    def on_open_clicked(self):
         dialog = QFileDialog(parent=self)
 
         file = dialog.getOpenFileName(caption="Открытие файла", filter="Файл pam (*.pam)")
 
         with open(file[0], "rb") as f:
             loaded_data = pickle.load(f)
+            self.state.from_dict(loaded_data["state"])
 
-            self.state.update(**loaded_data['state'])
-            self.stateEncodingTab.onOpen(loaded_data['encoding_data'])
-
-            #self.stateEncodingTab.onOpen()
-        #   Открываем файл, достаем из него стейт и данные
-        #   Обновляем self.state -> мы его закидывали во вкладки
-        #   следовательно он автоматически должен поменяться
-        #   Вызываем onOpen(...) у вкладок, которые подставят данные в текстовые поля
-        #   и вызовут rebuild и setData
+            self.__open_tabs__()
         self.parent().parent().show_create_project()
-        self.varTab.onOpen()
 
+    def __open_tabs__(self):
+        self.varTab.onOpen()
+        self.stateEncodingTab.onOpen()
 
     #Reaction on Signals
     def onVariantSelected(self):

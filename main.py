@@ -28,7 +28,7 @@ class MainWindow(QMainWindow):
         self.stack.setCurrentWidget(self.welcome)
 
     def open_file(self):
-        self.create_project.onOpenClicked()
+        self.create_project.on_open_clicked()
 
 def apply_light_palette(app: QApplication):
     """
