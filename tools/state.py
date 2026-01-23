@@ -11,14 +11,25 @@ class VariantState:
     typeTrigger: str = ""
     typeBasis: str = ""
 
+    def from_dict(self, data: dict):
+        for key, value in data.items():
+            if hasattr(self, key):
+                setattr(self, key, value)
+
+@dataclass
 class EncodingTabState:
-    triggerCount: int
-    stateCount: int
-    isTableVisible:bool
-    isCountsRight:bool
-    isVerified : bool
-    tableData : field(default_factory=List[Dict[str, Any]])
+    triggerCount: int = 0
+    stateCount: int = 0
+    isTableVisible:bool = False
+    isCountsRight:bool = False
+    isVerified : bool = False
+    tableData : List[Dict[str, Any]]= field(default_factory=list)
     states: List[Dict[str, Any]] = field(default_factory=dict)
+
+    def from_dict(self, data: dict):
+        for key, value in data.items():
+            if hasattr(self, key):
+                setattr(self, key, value)
 
 @dataclass
 class State:
@@ -34,3 +45,7 @@ class State:
                 'transitions': {} #TODO
             }
 
+    def from_dict(self, data:dict[str, Any]):
+        self.variant.from_dict(data["variant"])
+        self.tabs["variant"].from_dict(data["variant"])
+        self.tabs["encoding"].from_dict(data["tabs"]["encoding"])
