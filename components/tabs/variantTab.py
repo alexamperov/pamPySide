@@ -6,13 +6,14 @@ from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout,
 from PySide6.QtCore import Qt, QSize, Signal
 from components.compound.labeledText import LabeledText
 from tools.database import Database
+from tools.state import State
+
 
 class VariantTab(QWidget):
     #Signals
     variantSelected = Signal()
     wrongVariantSelected = Signal(int)
-
-    def __init__(self, state = None, onChangeVariantRequested=None):
+    def __init__(self, state = State(), onChangeVariantRequested=None):
         """
         :param state: Экземпляр состояния приложения
         :param onChangeVariantRequested: Колбек функция вызываемая при попытке смены варианта
@@ -116,7 +117,7 @@ class VariantTab(QWidget):
             return
 
         # Если повторное нажатие кнопки принять, то ничего делать не надо
-        if newVarNum == self.state.var_number:
+        if newVarNum == self.state.variant.var_number:
             return
 
         if newVarNum > len(self.variants) or newVarNum < 1:
@@ -124,21 +125,21 @@ class VariantTab(QWidget):
             return
 
         #Если вариант уже выбран - подтверждение смены варианта пользователем
-        if self.state.var_chosen:
+        if self.state.variant.var_chosen:
             if not self.requestChangeVariant():
-                self.varEdit.setText(str(self.state.var_number))
+                self.varEdit.setText(str(self.state.variant.var_number))
                 return
 
         var_num = int(self.varEdit.text())
         varIndex = var_num - 1
 
         #Обновление текущих данных варианта
-        self.state.var_number = var_num
-        self.state.typeTrigger = self.trigger_list[int(self.variants[varIndex][2])]
-        self.state.basis = self.basis_list[int(self.variants[varIndex][3])]
-        self.state.var_chosen = True
-        self.state.oneSequence = self.variants[varIndex][1].split(" ")
-        self.state.zeroSequence = self.variants[varIndex][0].split(" ")
+        self.state.variant.var_number = var_num
+        self.state.variant.typeTrigger = self.trigger_list[int(self.variants[varIndex][2])]
+        self.state.variant.typeBasis = self.basis_list[int(self.variants[varIndex][3])]
+        self.state.variant.var_chosen = True
+        self.state.variant.oneSequence = self.variants[varIndex][1].split(" ")
+        self.state.variant.zeroSequence = self.variants[varIndex][0].split(" ")
         #########################################################
 
         self.updatePreview()
@@ -146,11 +147,11 @@ class VariantTab(QWidget):
 
     #Установка в превью текущих значений
     def updatePreview(self):
-        self.zeroSequencePreview.setText(", ".join(self.state.zeroSequence))
-        self.oneSequencePreview.setText(", ".join(self.state.oneSequence))
-        self.triggerPreview.setText(self.state.typeTrigger)
-        self.basisPreview.setText(self.state.basis)
+        self.zeroSequencePreview.setText(", ".join(self.state.variant.zeroSequence))
+        self.oneSequencePreview.setText(", ".join(self.state.variant.oneSequence))
+        self.triggerPreview.setText(self.state.variant.typeTrigger)
+        self.basisPreview.setText(self.state.variant.typeBasis)
 
     def onOpen(self):
-        self.varEdit.setText(str(self.state.var_number))
+        self.varEdit.setText(str(self.state.variant.var_number))
         self.updatePreview()
