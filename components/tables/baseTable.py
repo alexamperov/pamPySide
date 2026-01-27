@@ -1,24 +1,47 @@
-from PySide6.QtWidgets import QTableWidget, QTableWidgetItem
+from dataclasses import field
+from typing import override
+
+from PySide6.QtWidgets import QTableWidget, QTableWidgetItem, QMessageBox
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor, QFont
 
 class BaseTable(QTableWidget):
 
-    _last_config : {}
+    _last_config = field(default_factory=dict)
 
-    def __init__(self, rowCount:int, colCount:int):
+    changingItem = {}
+    ignoreSignals = False
+
+    def __init__(self, rowCount:int, colCount:int, onVerifiedDataChanged = None):
 
         super().__init__(rowCount=rowCount, columnCount=colCount)
         self.verticalHeader().setVisible(False)
         self.horizontalHeader().setVisible(False)
+        self.onVerifiedDataChanged = onVerifiedDataChanged
 
         self.config = self.build_config()
         self.apply_config(self.config)
-
+        self.currentCellChanged.connect(self.on_current_cell_changed)
+        self.cellChanged.connect(self._on_cell_changed_)
         self.init_ui()
 
     def init_ui(self):
         self.setAlternatingRowColors(True)
+
+    def _on_cell_changed_(self, row, col):
+        if self.ignoreSignals:
+            return
+        accept = self.onVerifiedDataChanged()
+        if not accept:
+            self.item(row, col).setText(self.changingItem["value"])
+
+
+    def on_current_cell_changed(self, row,col):
+        self.changingItem = {
+            'row': row,
+            'col': col,
+            'value': self.item(row, col).text()
+        }
 
     def __highlightErrors(self, forRow = False, forColumn = True, avoidHeaders = True):
         print("Unimplemented")
@@ -53,6 +76,7 @@ class BaseTable(QTableWidget):
         regions = config.get("regions", {})
 
         binary = regions.get("binary", [])
+        editable = regions.get("editable", [])
         for i in headers:
             item = QTableWidgetItem()
             item.setText(i["title"])
@@ -80,6 +104,14 @@ class BaseTable(QTableWidget):
                     item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
                     item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                     self.setItem(row, col, item)
+        for i in editable:
+            for row in range(i["from"][0], i["to"][0] + 1):
+                for col in range(i["from"][1], i["to"][1] + 1):
+                    item = QTableWidgetItem()
+                    item.setText("")
+                    item.setFont(QFont("Segoe UI", 12))
+                    item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                    self.setItem(row, col, item)
 
     # TODO добавить еще трипл регион для [0,1,*] для структурной таблицы
     def mouseDoubleClickEvent(self, event, /):
@@ -88,6 +120,9 @@ class BaseTable(QTableWidget):
         if index.isValid():
             row, col = index.row(), index.column()
             item = self.item(row, col)
+            self.changingItem["value"] = item.text()
+            self.changingItem["row"] = row
+            self.changingItem["col"] = col
             binary = self._last_config.get("regions", {}).get("binary", [])
 
             variants = self._last_config.get("binary_variants")

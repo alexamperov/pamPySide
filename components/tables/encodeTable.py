@@ -13,6 +13,7 @@ class EncodeTable(BaseTable):
         return 2+pow(2,countTriggers), 1 + countTriggers
 
     def rebuild(self, countTriggers):
+        self.ignoreSignals = True
         self.countTriggers = countTriggers
         rowCount, colCount = self.__calculate_dimensions(countTriggers)
 
@@ -20,6 +21,7 @@ class EncodeTable(BaseTable):
         self.setColumnCount(colCount)
 
         super().apply_config(config=self.build_config())
+        self.ignoreSignals = False
 
     def build_config(self) -> {}:
 
@@ -66,9 +68,15 @@ class EncodeTable(BaseTable):
                 "binary": [
                     {
                     "from": (2,1),
-                    "to": (pow(2, self.countTriggers) + 1, self.countTriggers)
+                    "to": (pow(2, self.countTriggers), self.countTriggers)
                     }
                 ],
+                "editable": [
+                    {
+                        "from": (pow(2, self.countTriggers) + 1,1),
+                        "to": (pow(2, self.countTriggers) + 1, self.countTriggers)
+                    }
+                ]
             },
             "headers": headers,
             "spans": spans,
